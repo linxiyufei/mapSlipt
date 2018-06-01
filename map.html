@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>地图切片</title>
+  <script src="https://cdn.bootcss.com/vue/2.5.15/vue.js"></script>
+  <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=i3kHsDuINNulnHa8CqGYe6tavuH1e5Bc"></script>
+  <script type="text/javascript" src="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js"></script>
+  <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css" />
+  <style>
+    html{height:100%}  
+    body{height:100%;margin:0px;padding:0px} 
+    #app, #map-holder{height: 100%; width: 100%;}
+
+    .BMap_cpyCtrl{
+      display: none;
+    }
+    .anchorBL img{
+      display: none;
+    }
+
+    .tool-box, .area-list{
+      position: absolute;
+      z-index: 1000;
+      padding: 10px 20px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 8px;
+    }
+    .tool-box{
+      top: 10px;
+      left: 10px;
+    }
+    .area-list{
+      right: 10px;
+      bottom: 10px;
+    }
+    .data-holder{
+      position: absolute;
+      width: 600px;
+      min-height: 100px;
+      border: 1px solid #ddd;
+      top: 50px;
+      left: 50%;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-left: -300px;
+      z-index: 1000;
+    }
+    .data-holder .btn-close,
+    .data-holder .btn-dld{
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .data-holder .btn-dld{
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id='app'>
+    <div class='tool-box'>
+        选择：
+        <select
+          @change='prvChange'
+          v-model='selectedPrv'>
+          <option
+            v-for='prv in prvs'
+            :key='prv.id'
+            :value='prv.id'>{{prv.properties.name}}</option>
+        </select>
+        -
+        <select
+          @change='cityChange'
+          v-model='selectedCity'>
+          <option
+            v-for='city in citys'
+            :key='city.id'
+            :value='city.id'>{{city.name}}</option>
+        </select>
+        -
+        <select
+          @change='areaChange'
+          v-model='selectedArea'>
+          <option
+            v-for='area in areas'
+            :key='area.name'
+            :value='area.name'>{{area.name}}</option>
+        </select>
+    </div>
+
+    <div class='data-holder' v-show='isShowData'>
+        <a @click='downloadData' class='btn-dld' href='javascript:;'>下载</a>
+        <a @click='isShowData = false' class='btn-close' href='javascript:;'>关闭</a>
+        {{dataShow}}
+    </div>
+
+    <div id='map-holder'></div>
+
+    <div class='area-list'>
+      <div @click='showData(path)' v-for='(path, index) in paths' :key='index'>
+        <input
+          v-model='path.isShow'
+          @click.stop='isShowChange(path)' type='checkbox'> {{path.name}}
+      </div>
+    </div>
+  </div>
+  
+  <script src="./static/js/map.js"></script>
+</body>
+</html>
